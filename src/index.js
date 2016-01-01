@@ -105,7 +105,7 @@ class Progressor {
   }
 
   clearLine() {
-    this.output.write.eraseLine();
+    this.output.eraseLine();
   }
 
   clear() {
@@ -126,8 +126,8 @@ class Progressor {
     if (!this.options.overwrite) {
       return;
     }
-    this.output.write('\r');
-    this.output.write.eraseLine();
+    this.output('\r');
+    this.output.eraseLine();
   }
 
   /**
