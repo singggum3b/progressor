@@ -1,9 +1,9 @@
-import Helpers from './helpers'
+import {Helpers} from './helpers'
 import pad from 'pad';
 import { sprintf } from 'sprintf-js';
 import _ from 'lodash';
 import repeat from 'repeat-string';
-import charm from 'charm';
+import terminal from 'terminal-kit';
 import colors from 'colors';
 import strformat from 'strformat';
 class Progressor {
@@ -30,8 +30,7 @@ class Progressor {
     this.messages = {};
     this.formatters = null;
     this.options = _.merge(this.options, options);
-    this.output = charm();
-    this.output.pipe(process.stdout);
+    this.output = terminal.terminal;
 
     let tokens = {
       'current': '%current%'.bold,
@@ -106,7 +105,7 @@ class Progressor {
   }
 
   clearLine() {
-    this.output.clearLine();
+    this.output.write.eraseLine();
   }
 
   clear() {
@@ -127,7 +126,8 @@ class Progressor {
     if (!this.options.overwrite) {
       return;
     }
-    this.output.write(repeat("\n", 4));
+    this.output.write('\r');
+    this.output.write.eraseLine();
   }
 
   /**
@@ -164,7 +164,7 @@ class Progressor {
    * Updates the display
    */
   update(message) {
-    this.output.cursor(false);
+    this.output("");
     let lines = message.split("\n");
     if (null !== this.lastMessagesLength) {
       for (let index in lines) {
@@ -177,17 +177,17 @@ class Progressor {
 
     if (this.options.overwrite) {
       // move back to the beginning of the progress bar before redrawing it
-      this.output.write("\x0D");
+      this.output("\x0D");
     } else if (this.step > 0) {
-      this.output.write("\n");
+      this.output("\n");
     }
 
     if (this.formatLineCount) {
       //this.output.up(this.formatLinecount);
-      this.output.write(sprintf("\033[%dA", this.formatLineCount));
+      this.output(sprintf("\x1b[%dA", this.formatLineCount));
     }
 
-    this.output.write(lines.join("\n"));
+    this.output(lines.join("\n"));
     this.lastMessagesLength = 0;
 
     for (let index in lines) {
@@ -278,7 +278,7 @@ class Progressor {
   start(max = null) {
     this.started = true;
     if (this.options.beforeNewlines) {
-      this.output.write(repeat("\n", parseInt(this.options.beforeNewlines)));
+      this.output(repeat("\n", parseInt(this.options.beforeNewlines)));
     }
     this.startTime = Date.now();
     this.step = 0;
@@ -301,7 +301,7 @@ class Progressor {
     }
     this.setProgress(this.max);
     if (this.options.afterNewlines) {
-      this.output.write(repeat("\n", parseInt(this.options.afterNewlines)));
+      this.output(repeat("\n", parseInt(this.options.afterNewlines)));
     }
   }
 
@@ -313,10 +313,9 @@ class Progressor {
     this._customPlaceholders[name] = definition;
   }
 }
-;
 
 Progressor._customPlaceholders = {};
 
 Progressor._customFormats = {};
 
-export default Progressor;
+export {Progressor};

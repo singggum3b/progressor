@@ -1,4 +1,4 @@
-var Progressor = require('./../lib/index.js');
+var Progressor = require('./../lib/index.js').Progressor;
 
 var progressor = new Progressor({
   format: 'debug'

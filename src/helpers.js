@@ -53,7 +53,7 @@ class Helpers {
                 return acc.concat(bytes(c));
             }, []);
         }
-    }
+    };
     console.log(bytes(xs));
     return new Buffer([ 0x1b ].concat(bytes(xs)));
   }
@@ -62,4 +62,4 @@ class Helpers {
   }
 }
 
-export default Helpers;
+export {Helpers};

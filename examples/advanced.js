@@ -1,6 +1,6 @@
 var async = require('async');
-var Progressor = require('./../lib/index.js');
-var Helpers = require('./../lib/helpers.js');
+var Progressor = require('./../lib/index.js').Progressor;
+var Helpers = require('./../lib/helpers.js').Helpers;
 
 
 
