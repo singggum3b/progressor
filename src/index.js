@@ -164,7 +164,7 @@ class Progressor {
    * Updates the display
    */
   update(message) {
-    this.output("");
+    this.output.hideCursor();
     let lines = message.split("\n");
     if (null !== this.lastMessagesLength) {
       for (let index in lines) {
