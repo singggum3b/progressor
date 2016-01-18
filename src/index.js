@@ -6,6 +6,27 @@ import repeat from 'repeat-string';
 import terminal from 'terminal-kit';
 import colors from 'colors';
 import strformat from 'strformat';
+
+var currentTerm = null;
+
+if (process.platform === "win32") {
+	require("readline").createInterface({
+		input: process.stdin,
+		output: process.stdout
+	}).once("SIGINT", function () {
+		process.emit("SIGINT");
+	});
+}
+
+process.once("SIGINT", function () {
+	// graceful shutdown
+	if (process.stdout.isTTY) {
+		currentTerm && currentTerm("\n");
+		currentTerm && currentTerm.hideCursor(false);
+	}
+	process.exit();
+});
+
 class Progressor {
 
 	constructor(options, max = null) {
@@ -30,7 +51,7 @@ class Progressor {
 		this.messages = {};
 		this.formatters = null;
 		this.options = _.merge(this.options, options);
-		this.output = terminal.terminal;
+		currentTerm = this.output = terminal.terminal;
 
 		let tokens = {
 			'current': '%current%'.bold,
@@ -64,26 +85,6 @@ class Progressor {
 		if (lineCount > 1) {
 			this.formatLineCount = lineCount;
 		}
-
-		if (process.platform === "win32") {
-			require("readline")
-					.createInterface({
-						input: process.stdin,
-						output: process.stdout
-					})
-					.on("SIGINT", function () {
-						process.emit("SIGINT");
-					});
-		}
-
-		process.on("SIGINT", ()=> {
-			// graceful shutdown
-			if (process.stdout.isTTY) {
-				this.output("\n");
-				this.output.hideCursor(false);
-			}
-			process.exit();
-		});
 
 	}
 
